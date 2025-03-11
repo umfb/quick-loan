@@ -37,7 +37,8 @@ export async function submit(
   data: Record<string, any>,
   images: Record<string, any>,
   setIsLoading: (value: boolean) => void,
-  reset: () => void
+  reset: () => void,
+  clearSignature: () => void
 ) {
   try {
     const doc = new jsPDF();
@@ -49,7 +50,7 @@ export async function submit(
     let cursorY = 37;
     const maxWidth = pageWidth - marginX * 2;
 
-    const title = "Guarantor Assessment Form";
+    const title = "Quick Loan Application Form";
     doc.setFont("Helvetica", "bold");
     doc.setFontSize(24);
     const titleWidth = doc.getTextWidth(title);
@@ -206,12 +207,12 @@ export async function submit(
         email: "info@unilagmfbank.com",
       },
       to: [{ email: "it-unit@unilagmfbank.com", name: "UMFB" }],
-      subject: "Family Unit Assessment Form",
+      subject: "Quick Loan Application Form",
       htmlContent: "<b>Please find the attached loan form and images.</b>",
       attachment: [
         {
           content: base64Pdf,
-          name: "family-unit-assessment-form.pdf",
+          name: "quick-loan-form.pdf",
           type: "application/pdf",
         },
         { ...imageAttachment },
@@ -235,6 +236,7 @@ export async function submit(
       if (response.status === 200 || response.status === 201) {
         showSuccessNotification("Loan request submitted!");
         reset();
+        clearSignature();
       } else {
         showErrorNotification("Failed to send email.");
       }

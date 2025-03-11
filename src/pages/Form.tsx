@@ -58,7 +58,16 @@ export default function Form() {
 
   function saveSignature() {
     if (canvasRef.current && !canvasRef.current.isEmpty()) {
-      const imageUrl = canvasRef.current.toDataURL("image/png");
+      const canvas = canvasRef.current?.getCanvas();
+      if (!canvas) return;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      ctx.globalCompositeOperation = "destination-over";
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const imageUrl = canvas.toDataURL("image/png");
       const [header, base64] = imageUrl.split(",");
       const mimeType = header.split(":")[1].split(";")[0];
       const canvasElement = document.getElementById(`signature`);
@@ -89,7 +98,7 @@ export default function Form() {
       const sortedData = { ...data, "Applicant Signature": "true" };
       console.log(sortedData);
 
-      submit(sortedData, signatureFile, setIsLoading, reset);
+      submit(sortedData, signatureFile, setIsLoading, reset, clearSignature);
     }
   }
 
